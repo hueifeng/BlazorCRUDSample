@@ -1,8 +1,10 @@
 ﻿using BlazorServerCRUDSample.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorServerCRUDSample.Controllers
 {
@@ -16,22 +18,22 @@ namespace BlazorServerCRUDSample.Controllers
             this._dbcontext = dbcontext;
         }
         [HttpGet]
-        public IEnumerable<Student> Get()
+        public async Task<List<Student>> Get()
         {
-            return _dbcontext.Students.ToList();
+            return await _dbcontext.Students.AsQueryable().ToListAsync();
         }
         [HttpGet("{id}")]
-        public Student Get(int id)
+        public async Task<Student> Get(int id)
         {
-            return _dbcontext.Students.Find(id);
+            return await _dbcontext.Students.FindAsync(id);
         }
         [HttpPost]
-        public void Post([FromBody] Student student)
+        public async Task Post([FromBody] Student student)
         {
             student.CreateTime = DateTime.Now;
             if (ModelState.IsValid)
-                _dbcontext.Add(student);
-            _dbcontext.SaveChanges();
+                await _dbcontext.AddAsync(student);
+           await _dbcontext.SaveChangesAsync();
         }
         [HttpPut]
         public void Put([FromBody] Student student)

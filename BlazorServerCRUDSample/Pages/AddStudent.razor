@@ -1,0 +1,39 @@
+﻿@page "/addstudent"
+@inject HttpClient Http
+@using BlazorServerCRUDSample.Shared.Models
+@inject Microsoft.AspNetCore.Components.NavigationManager Navigation
+
+<h1>Create Student</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form @onsubmit="@(async () => await CreateStudent())">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input for="Name" class="form-control" @bind="@student.Name" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Description</label>
+                <textarea asp-for="Description" class="form-control" @bind="@student.Description"> </textarea>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <button class="btn btn-warning" @onclick="@cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@functions {
+    Student student = new Student();
+    protected async Task CreateStudent()
+    {
+        await Http.PostJsonAsync("/api/student", student);
+        Navigation.NavigateTo("/fetchstudent");
+    }
+    void cancel()
+    {
+        Navigation.NavigateTo("/fetchstudent");
+    }
+}  
